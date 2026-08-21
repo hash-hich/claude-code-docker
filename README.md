@@ -26,6 +26,12 @@ you work, not how someone else does.
 repository. What you read is what you get, and a fresh clone rebuilds the same
 thing.
 
+**Grounded in the reference.** The image follows Anthropic's own
+[devcontainer](https://github.com/anthropics/claude-code/tree/main/.devcontainer)
+for Claude Code: the same dedicated user, the tools the agent reaches for,
+without the pieces that serve the developer at the keyboard. Each block of
+the Dockerfile says what it keeps from it, what it changes, and why.
+
 ## Who it is for
 
 - You run Claude Code in containers and want a smaller, faster image.
