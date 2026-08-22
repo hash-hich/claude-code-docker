@@ -5,7 +5,36 @@
 A lightweight image of Claude Code, built to be forked. Take the project, keep
 the pieces you want, drop the rest, and build an image that is yours.
 
-## Why
+## Why a container
+
+A container draws the line.
+
+**A context you control.** Every message to Claude carries what was loaded
+at startup: the system prompt, the tool definitions, the skills, the memory
+files. On a workstation that set grows with time: an MCP server added for
+one project and never removed, skills and plugins that announce themselves
+on every request, notes left by other work. All of it costs tokens on every
+turn and dilutes the attention the model gives to your prompt. In a
+container the agent loads what the image declares, and nothing that drifted
+in. [How much context an image sends](#how-much-context-an-image-sends)
+shows how to measure it.
+
+**A boundary you choose.** The agent sees the directories you mount and
+nothing else. It cannot read a credential you did not hand it, and what it
+breaks, it breaks inside the container. This is what makes it reasonable to
+let it run without a permission prompt at every step, which is the mode
+Anthropic's own devcontainer exists for.
+
+**The same thing everywhere.** The image pins the Claude Code version and
+every tool next to it. A teammate, a CI runner and a server all run the same
+agent with the same tools, and a bug reproduces on the first try instead of
+depending on what each machine happens to have installed.
+
+**Disposable.** A container is started for a task and thrown away after. No
+state accumulates on your machine, no half-installed package survives, and
+the next run starts from the image you declared.
+
+## Why this project
 
 Running Claude Code in a container usually means inheriting a big image: a
 full Node toolchain, a pile of packages, and a set of skills and settings
