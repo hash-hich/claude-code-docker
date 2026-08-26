@@ -82,7 +82,12 @@ scripts/benchmark-image.sh claude-code:2.1.273
 
 The script runs claude's own `/context` command in the image, without
 network and without a project, and prints its breakdown. The numbers are
-claude's estimates, not a count by the API. Nothing is sent to Anthropic.
+claude's estimates, not a count by the API.
+
+**The benchmark consumes no tokens.** Nothing is sent to Anthropic: the
+container runs with no network, no API key is needed, and `/context`
+computes its estimate locally. Run it as often as you like, it costs
+nothing.
 
 `claude-code`, the full image, is the benchmark. With Claude Code 2.1.273:
 
@@ -96,7 +101,6 @@ claude's estimates, not a count by the API. Nothing is sent to Anthropic.
 
 Deferred tools are listed by name only and loaded on demand, which is why
 the total is below the sum. Benchmark your fork the same way and compare.
-
 ## Status
 
 Early stage. The project is being set up and nothing is buildable yet. This
