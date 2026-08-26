@@ -81,7 +81,8 @@ scripts/benchmark-image.sh claude-code:2.1.273
 ```
 
 The script runs claude's own `/context` command in the image, without
-network and without a project, and prints its breakdown. The numbers are
+network and without a project, prints its breakdown, then what that
+context costs in prompt cache at the model's price. The numbers are
 claude's estimates, not a count by the API.
 
 **The benchmark consumes no tokens.** Nothing is sent to Anthropic: the
@@ -89,7 +90,18 @@ container runs with no network, no API key is needed, and `/context`
 computes its estimate locally. Run it as often as you like, it costs
 nothing.
 
-`claude-code`, the full image, is the benchmark. With Claude Code 2.1.273:
+The estimate depends on the model: the system prompt and the tool
+descriptions differ from one model to the next, and so does the tokenizer.
+Without `--model`, claude estimates for its default model and names it at
+the top of its output. Pass `--model` to estimate for the one you run, and
+compare two images with the same model:
+
+```
+scripts/benchmark-image.sh --model claude-fable-5-1 claude-code:2.1.273
+```
+
+`claude-code`, the full image, is the benchmark. With Claude Code 2.1.273,
+estimated for claude-opus-5, its default:
 
 | Category               | Tokens |
 |------------------------|--------|
@@ -100,7 +112,17 @@ nothing.
 | Total before the prompt| 16.4k  |
 
 Deferred tools are listed by name only and loaded on demand, which is why
-the total is below the sum. Benchmark your fork the same way and compare.
+the total is below the sum. The same image estimated for claude-fable-5-1
+loads 17.5k, and for claude-sonnet-5 30.7k. Benchmark your fork the same
+way and compare.
+
+The cost table below the breakdown applies the prices Anthropic publishes,
+pinned in the script with their date, to the total: Claude Code writes the
+context to the prompt cache at the first message of a session and reads it
+at every following turn, so the write is paid once per session and the read
+once per turn. For claude-fable-5-1, the 17.5k tokens are 0.22 USD to write
+for five minutes, 0.35 USD for an hour, and 0.004 USD to read.
+
 ## Status
 
 Early stage. The project is being set up and nothing is buildable yet. This
