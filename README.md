@@ -1,9 +1,13 @@
-# claude-code-docker-lite
+# claude-code-docker
 
-**Claude Code in a container, with nothing you did not ask for.**
+**Claude Code in a container, with a context you can measure.**
 
-A lightweight image of Claude Code, built to be forked. Take the project, keep
-the pieces you want, drop the rest, and build an image that is yours.
+This project holds a Docker image carrying what Claude Code needs to work.
+It starts the agent on a fresh, known context, which is the main lever there
+is on what a session costs. Fork the repository to add the tools, the skills
+and whatever else your own image calls for. A benchmark script comes with
+it, so that you can measure what you built and compare it to the image you
+started from.
 
 ## Why a container
 
@@ -34,46 +38,30 @@ depending on what each machine happens to have installed.
 state accumulates on your machine, no half-installed package survives, and
 the next run starts from the image you declared.
 
-## Why this project
+## Where the image comes from
 
-Running Claude Code in a container usually means inheriting a big image: a
-full Node toolchain, a pile of packages, and a set of skills and settings
-someone else picked. Most of it is never used, all of it ships anyway, and
-none of it is easy to change.
-
-This project takes the opposite path.
-
-**Light by default.** The image carries Claude Code and what it needs to run.
-Nothing else gets in unless you put it there.
-
-**Yours to shape.** The project is a starting point, not a finished product.
-Fork it, enable the skills you rely on, disable the ones you never use, add
-the tools your work needs, and build. The result is an image that matches how
-you work, not how someone else does.
-
-**Nothing hidden.** Everything that ends up in the image is declared in the
-repository. What you read is what you get, and a fresh clone rebuilds the same
-thing.
-
-**Grounded in the reference.** The image follows Anthropic's own
+The image follows Anthropic's own
 [devcontainer](https://github.com/anthropics/claude-code/tree/main/.devcontainer)
-for Claude Code: the same dedicated user, the tools the agent reaches for,
-without the pieces that serve the developer at the keyboard. Each block of
-the Dockerfile says what it keeps from it, what it changes, and why.
+for Claude Code, keeping its dedicated user and the tools the agent reaches
+for. What it drops is what that devcontainer installs for the person using
+it, the editors, the interactive shell and the manual pages, along with the
+packages its network firewall needs and the sudo rights that go with them.
+Each block of the Dockerfile says what it keeps, what it changes, and why.
 
 ## Who it is for
 
-- You run Claude Code in containers and want a smaller, faster image.
-- You want a Claude Code setup you control end to end: agent version, tools,
-  skills.
-- You need one image for a team, and want every member to run the same thing.
+- You want to work with Claude without pollution from previous tasks.
+- You add skills, MCP servers or memory files, and want to know what each
+  one costs on every turn.
+- You need one image for a team, and want every member to run the same
+  thing.
 
 ## How much context an image sends
 
 Every message to Claude carries the system prompt, the tool definitions,
-the skills and the memory files loaded at startup. That is the cost of an
-image before the first word of your prompt, and it is what a fork changes
-when it adds or removes something. To see it:
+the skills and the memory files loaded at startup. That is what the agent
+costs before your first word, and what grows every time you add something.
+To see it:
 
 ```
 scripts/build-image.sh claude-code
@@ -94,14 +82,14 @@ The estimate depends on the model: the system prompt and the tool
 descriptions differ from one model to the next, and so does the tokenizer.
 Without `--model`, claude estimates for its default model and names it at
 the top of its output. Pass `--model` to estimate for the one you run, and
-compare two images with the same model:
+compare two setups with the same model:
 
 ```
 scripts/benchmark-image.sh --model claude-fable-5-1 claude-code:2.1.273
 ```
 
-`claude-code`, the full image, is the benchmark. With Claude Code 2.1.273,
-estimated for claude-opus-5, its default:
+The image is the floor every addition is measured from. With Claude Code
+2.1.273, estimated for claude-opus-5, its default:
 
 | Category               | Tokens |
 |------------------------|--------|
@@ -113,8 +101,7 @@ estimated for claude-opus-5, its default:
 
 Deferred tools are listed by name only and loaded on demand, which is why
 the total is below the sum. The same image estimated for claude-fable-5-1
-loads 17.5k, and for claude-sonnet-5 30.7k. Benchmark your fork the same
-way and compare.
+loads 17.5k, and for claude-sonnet-5 30.7k.
 
 The cost table below the breakdown applies the prices Anthropic publishes,
 pinned in the script with their date, to the total: Claude Code writes the
@@ -122,11 +109,6 @@ context to the prompt cache at the first message of a session and reads it
 at every following turn, so the write is paid once per session and the read
 once per turn. For claude-fable-5-1, the 17.5k tokens are 0.22 USD to write
 for five minutes, 0.35 USD for an hour, and 0.004 USD to read.
-
-## Status
-
-Early stage. The project is being set up and nothing is buildable yet. This
-README states the goal; the rest follows.
 
 ## License
 
