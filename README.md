@@ -110,6 +110,50 @@ at every following turn, so the write is paid once per session and the read
 once per turn. For claude-fable-5-1, the 17.5k tokens are 0.22 USD to write
 for five minutes, 0.35 USD for an hour, and 0.004 USD to read.
 
+## What the measurements show
+
+Four results, each reproducible with the commands above.
+
+**What the image contains does not change the number.** The full image and
+a barebones one holding the binary and nothing else, no git, no gh, no
+ripgrep, print the same breakdown byte for byte. Installing fewer packages
+saves megabytes and pull time, never tokens: Claude Code does not describe
+its own tools according to what it finds on the PATH.
+
+| Image                     | Size   | Context |
+|---------------------------|--------|---------|
+| Every tool installed      | 740 MB | 16.4k   |
+| The binary alone          | 471 MB | 16.4k   |
+
+**What you add does change it, and is itemised.** `/context` prices each
+skill, each memory file and each MCP tool separately, and marks a skill as
+yours or built in. Measured additions, on the same image:
+
+| Addition                            | Tokens |
+|-------------------------------------|--------|
+| One user skill                      | 110    |
+| A short project CLAUDE.md           | 55     |
+| An MCP server exposing three tools  | 848    |
+
+MCP tools are deferred in 2.1.273, so their schemas load on demand and stay
+out of the loaded total. One blind spot is worth knowing: the instructions
+a server declares when it connects did not show up in any category, even at
+4,500 tokens, so `/context` under-reports a server that ships a long one.
+
+**Removing the built-in skills costs more than it saves.** With
+`disableBundledSkills`, the total rises from 16.4k to 24.9k. The Workflow
+tool carries its authoring documentation in a built-in skill, loaded
+on demand. Remove the skill and the tool inlines that documentation into
+its own description. Cutting the single `workflow-authoring` skill
+reproduces it exactly. The two only pay off together: `disableWorkflows`
+alone saves 2.6k, and with the skills off 2.7k.
+
+**The tool set is the only lever with mass.** `--tools` restricted to six
+tools takes the floor from 16.4k to 8.5k, and `--tools ""` to 2.9k. That is
+a different agent, not a lighter image, and the flag ignores user, project
+and local settings files, so an image that bakes it locks the tool set for
+everything built on top.
+
 ## License
 
 To be decided.
