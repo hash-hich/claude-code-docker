@@ -56,6 +56,54 @@ Each block of the Dockerfile says what it keeps, what it changes, and why.
 - You need one image for a team, and want every member to run the same
   thing.
 
+## Building your own image
+
+`custom/` is a working image built on `claude-code`, and the place to put
+what your agent needs. Copy the directory under a name of your own, edit
+what is in it, build:
+
+```
+scripts/build-image.sh claude-code
+scripts/build-image.sh custom
+scripts/benchmark-image.sh custom:2.1.273
+```
+
+Everything the agent reads at startup is a file under `custom/config/`, and
+the Dockerfile copies each one where Claude Code looks for it. Add a file to
+add the thing, delete it to remove it, the Dockerfile stays untouched.
+
+| What you add       | Where it goes               | Loaded as                |
+|--------------------|-----------------------------|--------------------------|
+| Memory             | `config/CLAUDE.md`          | instructions, every turn |
+| System prompt      | `config/system-prompt.md`   | appended to the prompt   |
+| Skills             | `config/skills/<name>/`     | one directory per skill  |
+| Subagents          | `config/agents/<name>.md`   | one file per agent       |
+| MCP servers        | `config/mcp.json`           | user scope, no approval  |
+| Settings           | `config/settings.json`      | the settings file        |
+| Command line tools | a package in the Dockerfile | installed by apt         |
+
+Those all land in the agent's home, which is user scope. It is what a
+container wants: skills, subagents and MCP servers declared there load
+without the approval a project `.mcp.json` asks for, and they follow the
+agent into whatever directory you point it at.
+
+The system prompt is the exception to the file rule. Claude Code accepts an
+addition to it only on the command line, with no settings key and no
+environment variable, so the image ships a small entrypoint that adds the
+flag when the file is there. That is the whole reason `custom/` has an
+entrypoint of its own.
+
+The example configuration is deliberately tiny, and the benchmark shows what
+it costs: 16.4k for the base image, 16.7k with it, itemised down to the
+single skill and the single subagent.
+
+| Addition in `custom/`     | Tokens |
+|---------------------------|--------|
+| Memory file               | 133    |
+| System prompt             | ~100   |
+| One skill                 | ~60    |
+| One subagent              | 41     |
+
 ## How much context an image sends
 
 Every message to Claude carries the system prompt, the tool definitions,
