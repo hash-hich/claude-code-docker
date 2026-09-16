@@ -225,4 +225,4 @@ everything built on top.
 
 ## License
 
-To be decided.
+[MIT](LICENSE).
