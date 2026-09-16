@@ -48,6 +48,27 @@ it, the editors, the interactive shell and the manual pages, along with the
 packages its network firewall needs and the sudo rights that go with them.
 Each block of the Dockerfile says what it keeps, what it changes, and why.
 
+## Pulling the image
+
+Every push to `main` that changes the image publishes it to the GitHub
+Container Registry, so that running it takes no build:
+
+```
+docker run --rm ghcr.io/hash-hich/claude-code:2.1.273 --version
+```
+
+Pull the version tag rather than `latest`. It names the Claude Code version
+the image holds, which is the promise the whole repository is built on;
+`latest` only follows `main` and says nothing about what is inside.
+
+That tag is read from the Dockerfile by the same script the local build
+uses, so an image pulled from the registry and one built with
+`scripts/build-image.sh` carry the same binary. A fork publishes under its
+own account with nothing to configure: the workflow takes the owner from the
+repository it runs in, and its credentials are the token GitHub already
+gives the job. Only `claude-code` is published, `custom/` being an example
+to copy rather than an image to pull.
+
 ## Who it is for
 
 - You want to work with Claude without pollution from previous tasks.
