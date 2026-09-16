@@ -1,0 +1,64 @@
+## Context Usage
+
+**Model:** claude-opus-5  
+**Tokens:** 16.7k / 1m (2%)
+
+### Estimated usage by category
+
+| Category | Tokens | Percentage |
+|----------|--------|------------|
+| System prompt | 3.1k | 0.3% |
+| System tools | 11.6k | 1.2% |
+| MCP tools (deferred) | 66 | 0.0% |
+| System tools (deferred) | 16.7k | 1.7% |
+| Custom agents | 41 | 0.0% |
+| Memory files | 133 | 0.0% |
+| Skills | 1.9k | 0.2% |
+| Free space | 950.3k | 95.0% |
+| Autocompact buffer | 33k | 3.3% |
+
+### MCP Tools
+
+| Tool | Server | Tokens |
+|------|--------|--------|
+| mcp__noise__ping | noise | 66 |
+
+### Custom Agents
+
+| Agent Type | Source | Tokens |
+|------------|--------|--------|
+| changelog-writer | User | 41 |
+
+### Memory Files
+
+| Type | Path | Tokens |
+|------|------|--------|
+| User | /home/agent/.claude/CLAUDE.md | 133 |
+
+### Skills
+
+| Skill | Source | Tokens |
+|-------|--------|--------|
+| release-notes | User | ~60 |
+| dataviz | Built-in | ~480 |
+| update-config | Built-in | ~240 |
+| keybindings-help | Built-in | ~80 |
+| code-review | Built-in | ~150 |
+| simplify | Built-in | ~60 |
+| fewer-permission-prompts | Built-in | ~60 |
+| loop | Built-in | ~120 |
+| claude-api | Built-in | ~360 |
+| workflow-authoring | Built-in | ~80 |
+| run | Built-in | ~120 |
+| init | Built-in | ~20 |
+| security-review | Built-in | ~30 |
+
+### Estimated cost in prompt cache
+
+Prices of 2026-09-16 for claude-opus-5, https://platform.claude.com/docs/en/about-claude/pricing
+
+| Operation           | USD per MTok | For this context |
+|---------------------|--------------|------------------|
+| Cache write, 5 min  |         6.25 |           0.1044 |
+| Cache write, 1 hour |        10.00 |           0.1670 |
+| Cache read          |        0.500 |           0.0083 |

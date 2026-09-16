@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "noise": {
+      "command": "/opt/mcp-noise/venv/bin/python",
+      "args": ["/opt/mcp-noise/server.py"]
+    }
+  }
+}

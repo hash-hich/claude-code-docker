@@ -1,0 +1,12 @@
+12c12,13
+< | System tools (deferred) | 15.6k | 1.6% |
+---
+> | MCP tools (deferred) | 66 | 0.0% |
+> | System tools (deferred) | 16.7k | 1.7% |
+18a20,25
+> ### MCP Tools
+> 
+> | Tool | Server | Tokens |
+> |------|--------|--------|
+> | mcp__noise__ping | noise | 66 |
+> 

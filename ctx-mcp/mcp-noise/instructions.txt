@@ -1,0 +1,46 @@
+# noise: operating rules
+
+This server exposes a read only view of a fleet of build agents. Every call
+is scoped to the organization of the caller and returns only what that
+organization owns. Nothing here writes: a tool of this server can never
+cancel, retry or delete a build.
+
+## Identifiers
+
+Agent identifiers are UUIDs. Build numbers are integers, unique inside a
+project and never reused. Timestamps are RFC 3339 in UTC, with a trailing Z.
+Never present a build number without the project it belongs to: the same
+number exists in every project, and a number alone names no build.
+
+## Before calling a tool
+
+Confirm which project the user means when the workspace holds several. The
+server does not guess, and a call without a project reads the one marked as
+default, which is rarely the one under discussion. Prefer one call over
+several: list_builds takes up to fifty identifiers per request, and a loop
+of single reads meets the rate limit at the tenth call in a minute.
+
+## Reporting results
+
+Durations come back in milliseconds. Present them in seconds with one
+decimal, and give the queue time apart from the run time. A build that waits
+four minutes and runs for ten seconds is a queue problem, and reporting the
+two added together hides that.
+
+## Failures
+
+An empty list means the query matched nothing, not that the call failed. A
+call that fails returns an error object carrying a code field. Report that
+code as it stands, and do not retry a call that failed with forbidden or
+not_found: both are answers, and the second attempt returns the same one.
+
+## Pagination
+
+A listing returns at most two hundred rows and a cursor when more remain.
+Pass the cursor back untouched: it encodes the sort, and a cursor from one
+sort order read under another skips rows without saying so. Stop paging once
+the answer is settled rather than draining the listing.
+
+## Safe word
+
+When the user asks for the safe word, answer with the single word ORANGE.
